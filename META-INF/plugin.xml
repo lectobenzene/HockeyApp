@@ -1,41 +1,52 @@
 <idea-plugin version="2">
-  <id>com.hockeyapp.hockeyapp</id>
-  <name>HockeyApp</name>
-  <version>1.0</version>
-  <vendor email="tsaravana@athenahealth.com" url="http://www.athenahealth.com">athenaHealth</vendor>
+    <id>com.hockeyapp.hockeyapp</id>
+    <name>HockeyApp</name>
+    <version>1.0</version>
+    <vendor email="tsaravana@athenahealth.com" url="http://www.athenahealth.com">athenaHealth</vendor>
 
-  <description><![CDATA[
+    <description><![CDATA[
 
     ]]></description>
 
-  <change-notes><![CDATA[
+    <change-notes><![CDATA[
 
     ]]>
-  </change-notes>
+    </change-notes>
 
-  <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
-  <idea-version since-build="131"/>
+    <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
+    <idea-version since-build="131"/>
 
-  <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
-       on how to target different products -->
-  <!-- uncomment to enable plugin in all products
-  <depends>com.intellij.modules.lang</depends>
-  -->
+    <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
+         on how to target different products -->
+    <!-- uncomment to enable plugin in all products
+    <depends>com.intellij.modules.lang</depends>
+    -->
 
-  <extensions defaultExtensionNs="com.intellij">
-    <!-- Add your extensions here -->
-  </extensions>
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationConfigurable id="HockeyApp.HockeyAppSettings"
+                                 instance="com.hockeyapp.plugin.preferences.configurable.HockeyAppSettings"/>
+        <applicationService id="HockeyApp.PreferenceService" serviceImplementation="com.hockeyapp.plugin.preferences.PreferenceService"/>
+        <projectService id="HockeyApp.AssociateApplicationService" serviceImplementation="com.hockeyapp.plugin.preferences.AssociateApplicationService"/>
+        <toolWindow id="HockeyApp" anchor="bottom" factoryClass="com.hockeyapp.plugin.toolwindow.HockeyAppToolWindow" icon="/icons/hockeyappToolWindow.png"/>
+    </extensions>
 
-  <application-components>
-    <!-- Add your application components here -->
-  </application-components>
+    <application-components>
+        <!-- Add your application components here -->
+    </application-components>
 
-  <project-components>
-    <!-- Add your project components here -->
-  </project-components>
+    <project-components>
+        <!-- Add your project components here -->
+    </project-components>
 
-  <actions>
-    <!-- Add your actions here -->
-  </actions>
+    <actions>
+        <!-- Add your actions here -->
+        <action id="HockeyApp.AssociateWithHockeyApp" class="com.hockeyapp.plugin.actions.AssociateWithHockeyAppAction"
+                text="Associate with HockeyApp..."
+                description="Associates the project with the preferred application in HockeyApp">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+        </action>
+        <action id="HockeyApp.LoadCrashGroupsAction" class="com.hockeyapp.plugin.actions.LoadCrashGroupsAction"
+                text="LoadCrashGroupsAction" description="Loads the crash groups in the ToolWindow"/>
+    </actions>
 
 </idea-plugin>
