@@ -1,8 +1,10 @@
 package com.hockeyapp.core.network;
 
 import com.google.gson.Gson;
+import com.hockeyapp.core.network.models.crash.CrashInfo;
 import com.hockeyapp.core.network.models.crashreasons.CrashGroups;
 import com.hockeyapp.core.network.models.listapps.ListApps;
+import com.hockeyapp.core.network.models.listcrashes.ListCrashes;
 import com.hockeyapp.plugin.preferences.PreferenceService;
 import com.intellij.openapi.components.ServiceManager;
 import org.jetbrains.annotations.NotNull;
@@ -14,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -35,12 +38,44 @@ public class NetworkService {
     }
 
     @Nullable
-    public static CrashGroups getCrashReasons(String appId, Map<String,String> params){
+    public static CrashGroups getCrashReasons(String appId, Map<String, String> params) {
         final String response = getResponse(Urls.getCrashReasons(appId), params);
         if (response != null) {
             return getGson().fromJson(response, CrashGroups.class);
         }
         return null;
+    }
+
+    @Nullable
+    public static ListCrashes getListCrashes(String appId, String crashGroupId, Map<String, String> params) {
+        final String response = getResponse(Urls.getListOfCrashes(appId, crashGroupId), params);
+        if (response != null) {
+            return getGson().fromJson(response, ListCrashes.class);
+        }
+        return null;
+    }
+
+    @Nullable
+    public static CrashInfo getCrashInfo(String appId, String crashId, Map<String, String> params) {
+        final String response = getResponse(Urls.getCrash(appId, crashId), params);
+        if (response != null) {
+            return getGson().fromJson(response, CrashInfo.class);
+        }
+        return null;
+    }
+
+    @Nullable
+    public static String getStackTrace(String appId, String crashId) {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("format", "log");
+        return getHtmlResponse(Urls.getCrash(appId, crashId), params);
+    }
+
+    @Nullable
+    public static String getLogDescription(String appId, String crashId) {
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("format", "text");
+        return getResponse(Urls.getCrash(appId, crashId), params);
     }
 
     @NotNull
@@ -52,22 +87,22 @@ public class NetworkService {
     }
 
     @Nullable
-    public static String getResponse(String url){
+    public static String getResponse(String url) {
         return getResponse(url, null);
     }
 
     @Nullable
-    public static String getResponse(@NotNull String url, @Nullable Map<String,String> params) {
+    private static BufferedReader getRawResponse(@NotNull String url, @Nullable Map<String, String> params) {
         final HttpsURLConnection urlConnection;
         BufferedReader in = null;
         try {
-            if(params != null && !params.isEmpty()){
+            if (params != null && !params.isEmpty()) {
                 StringBuilder builder = new StringBuilder(url);
                 builder.append("?");
                 for (String key : params.keySet()) {
                     builder.append(key).append("=").append(params.get(key)).append("&");
                 }
-                builder.deleteCharAt(builder.length()-1);
+                builder.deleteCharAt(builder.length() - 1);
                 url = builder.toString();
             }
 
@@ -80,35 +115,78 @@ public class NetworkService {
 
             final int responseCode = urlConnection.getResponseCode();
 
-            System.out.println("Request URL : "+ urlConnection.getURL());
+            System.out.println("Request URL : " + urlConnection.getURL());
             System.out.println("Response code : " + responseCode);
             if (responseCode != RESPONSE_CODE_OK) {
                 return null;
             }
 
             in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-
-            String inputLine;
-            StringBuilder builder = new StringBuilder();
-
-            while ((inputLine = in.readLine()) != null) {
-                builder.append(inputLine);
-            }
-
-            System.out.println("Response : " + builder.toString());
-            return builder.toString();
+            return in;
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
+        }
+        return null;
+    }
+
+    @Nullable
+    public static String getResponse(@NotNull String url, @Nullable Map<String, String> params) {
+        final BufferedReader in = getRawResponse(url, params);
+
+        if (in != null) {
+
+            String inputLine;
+            StringBuilder builder = new StringBuilder();
+
             try {
-                if (in != null) {
-                    in.close();
+                while ((inputLine = in.readLine()) != null) {
+                    builder.append(inputLine);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            System.out.println("Response : " + builder.toString());
+
+            try {
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return builder.toString();
+        }
+        return null;
+    }
+
+    @Nullable
+    public static String getHtmlResponse(@NotNull String url, @Nullable Map<String, String> params) {
+        final BufferedReader in = getRawResponse(url, params);
+
+        if (in != null) {
+
+            String inputLine;
+            StringBuilder builder = new StringBuilder("<html>");
+
+            try {
+                while ((inputLine = in.readLine()) != null) {
+                    inputLine = inputLine.replaceAll("\t", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                    builder.append(inputLine).append("<br/>");
+                }
+                builder.append("</html>");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            System.out.println("HTML Response : " + builder.toString());
+
+            try {
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return builder.toString();
         }
         return null;
     }

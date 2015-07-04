@@ -8,10 +8,10 @@ import com.google.gson.annotations.SerializedName;
 public class CrashReason {
 
     @Expose
-    private Integer id;
+    private Long id;
     @SerializedName("app_id")
     @Expose
-    private Integer appId;
+    private Long appId;
     @SerializedName("created_at")
     @Expose
     private String createdAt;
@@ -19,7 +19,7 @@ public class CrashReason {
     @Expose
     private String updatedAt;
     @Expose
-    private Integer status;
+    private Long status;
     @Expose
     private String reason;
     @SerializedName("last_crash_at")
@@ -32,7 +32,7 @@ public class CrashReason {
     private Boolean fixed;
     @SerializedName("app_version_id")
     @Expose
-    private Integer appVersionId;
+    private Long appVersionId;
     @SerializedName("bundle_version")
     @Expose
     private String bundleVersion;
@@ -41,13 +41,13 @@ public class CrashReason {
     private String bundleShortVersion;
     @SerializedName("number_of_crashes")
     @Expose
-    private Integer numberOfCrashes;
+    private Long numberOfCrashes;
     @SerializedName("grouping_hash")
     @Expose
     private String groupingHash;
     @SerializedName("grouping_type")
     @Expose
-    private Integer groupingType;
+    private Long groupingType;
     @Expose
     private String method;
     @Expose
@@ -63,7 +63,7 @@ public class CrashReason {
      * @return
      *     The id
      */
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
@@ -72,7 +72,7 @@ public class CrashReason {
      * @param id
      *     The id
      */
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -81,7 +81,7 @@ public class CrashReason {
      * @return
      *     The appId
      */
-    public Integer getAppId() {
+    public Long getAppId() {
         return appId;
     }
 
@@ -90,7 +90,7 @@ public class CrashReason {
      * @param appId
      *     The app_id
      */
-    public void setAppId(Integer appId) {
+    public void setAppId(Long appId) {
         this.appId = appId;
     }
 
@@ -135,7 +135,7 @@ public class CrashReason {
      * @return
      *     The status
      */
-    public Integer getStatus() {
+    public Long getStatus() {
         return status;
     }
 
@@ -144,7 +144,7 @@ public class CrashReason {
      * @param status
      *     The status
      */
-    public void setStatus(Integer status) {
+    public void setStatus(Long status) {
         this.status = status;
     }
 
@@ -225,7 +225,7 @@ public class CrashReason {
      * @return
      *     The appVersionId
      */
-    public Integer getAppVersionId() {
+    public Long getAppVersionId() {
         return appVersionId;
     }
 
@@ -234,7 +234,7 @@ public class CrashReason {
      * @param appVersionId
      *     The app_version_id
      */
-    public void setAppVersionId(Integer appVersionId) {
+    public void setAppVersionId(Long appVersionId) {
         this.appVersionId = appVersionId;
     }
 
@@ -279,7 +279,7 @@ public class CrashReason {
      * @return
      *     The numberOfCrashes
      */
-    public Integer getNumberOfCrashes() {
+    public Long getNumberOfCrashes() {
         return numberOfCrashes;
     }
 
@@ -288,7 +288,7 @@ public class CrashReason {
      * @param numberOfCrashes
      *     The number_of_crashes
      */
-    public void setNumberOfCrashes(Integer numberOfCrashes) {
+    public void setNumberOfCrashes(Long numberOfCrashes) {
         this.numberOfCrashes = numberOfCrashes;
     }
 
@@ -315,7 +315,7 @@ public class CrashReason {
      * @return
      *     The groupingType
      */
-    public Integer getGroupingType() {
+    public Long getGroupingType() {
         return groupingType;
     }
 
@@ -324,7 +324,7 @@ public class CrashReason {
      * @param groupingType
      *     The grouping_type
      */
-    public void setGroupingType(Integer groupingType) {
+    public void setGroupingType(Long groupingType) {
         this.groupingType = groupingType;
     }
 

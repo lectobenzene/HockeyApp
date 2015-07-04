@@ -6,7 +6,6 @@ import com.hockeyapp.plugin.preferences.AssociateApplicationService;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.util.IconLoader;
 
 /**
  * Created by tsaravana on 6/19/2015.
@@ -14,10 +13,6 @@ import com.intellij.openapi.util.IconLoader;
 public class AssociateWithHockeyAppAction extends AnAction {
 
     private App app = null;
-
-    public AssociateWithHockeyAppAction(){
-        super(IconLoader.getIcon("/icons/hockeyappAction.png"));
-    }
 
     public void actionPerformed(AnActionEvent e) {
         ListAppsDialog listAppsDialog = new ListAppsDialog(e.getProject());

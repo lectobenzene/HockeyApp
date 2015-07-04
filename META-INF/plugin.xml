@@ -41,7 +41,7 @@
     <actions>
         <!-- Add your actions here -->
         <action id="HockeyApp.AssociateWithHockeyApp" class="com.hockeyapp.plugin.actions.AssociateWithHockeyAppAction"
-                text="Associate with HockeyApp..."
+                text="Associate with HockeyApp..." icon="/icons/hockeyappAction.png"
                 description="Associates the project with the preferred application in HockeyApp">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
         </action>

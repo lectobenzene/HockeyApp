@@ -1,8 +1,7 @@
 package com.hockeyapp.plugin.toolwindow.swingcomponents;
 
-import com.hockeyapp.core.network.models.crashreasons.CrashGroups;
+import com.hockeyapp.core.network.models.Mapper;
 import com.hockeyapp.core.network.models.crashreasons.CrashReason;
-import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBPanel;
 
@@ -14,26 +13,64 @@ import java.awt.*;
  */
 public class CrashGroupsCellRenderer extends JBPanel implements ListCellRenderer {
 
+    int jpContentWidth = 0;
     private JPanel contentPanel;
-    private JBLabel labelLineNumber;
-    private JBLabel labelReason;
+    private JBLabel lblReason;
+    private JBLabel lblClassMethod;
+    private JPanel jpContent;
+    private JPanel jpCount;
+    private JPanel jpDate;
+    private JBLabel lblCount;
+    private JBLabel lblStatus;
+    private JBLabel lblLastCrashAt;
+    private JBLabel lblVersion;
+    private JBLabel lblLineNo;
+    private JPanel jpTitle;
 
     public CrashGroupsCellRenderer() {
+        this.setLayout(new BorderLayout(0, 0));
         this.add(contentPanel);
         setOpaque(true);
+        setFieldOpaque(false);
+    }
+
+    private void setFieldOpaque(boolean isOpaque) {
+        contentPanel.setOpaque(isOpaque);
+        lblReason.setOpaque(isOpaque);
+        lblClassMethod.setOpaque(isOpaque);
+        jpContent.setOpaque(isOpaque);
+        jpCount.setOpaque(isOpaque);
+        jpDate.setOpaque(isOpaque);
+        lblCount.setOpaque(isOpaque);
+        lblStatus.setOpaque(isOpaque);
+        lblLastCrashAt.setOpaque(isOpaque);
+        lblVersion.setOpaque(isOpaque);
+        lblLineNo.setOpaque(isOpaque);
+        jpTitle.setOpaque(isOpaque);
     }
 
     public Component getListCellRendererComponent(JList list, Object value,
                                                   int index, boolean isSelected, boolean cellHasFocus) {
         CrashReason entry = (CrashReason) value;
-        labelReason.setText(entry.getReason());
-        labelLineNumber.setText(entry.getLine());
-        if (isSelected) {
-            setBackground(JBColor.BLACK);
-            setForeground(JBColor.WHITE);
+
+        if (index % 2 == 0) {
+            setBackground(Color.decode("0XD7D3FF"));
         } else {
-            setBackground(JBColor.WHITE);
-            setForeground(JBColor.BLACK);
+            setBackground(Color.decode("0XF6F7FA"));
+        }
+
+        lblCount.setText(String.valueOf(entry.getNumberOfCrashes()));
+        lblStatus.setText(Mapper.getStatus((entry.getStatus().intValue())));
+
+        lblClassMethod.setText(entry.getClass_() + "." + entry.getMethod());
+        lblLineNo.setText("line " + entry.getLine());
+        lblReason.setText(entry.getReason());
+
+        lblLastCrashAt.setText(entry.getLastCrashAt());
+        lblVersion.setText(entry.getBundleShortVersion() + "(" + entry.getBundleVersion() + ")");
+
+        if (isSelected) {
+            setBackground(Color.decode("0XFFFF99"));
         }
         return this;
     }

@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
+import com.intellij.ui.JBSplitter;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
@@ -27,12 +28,14 @@ public class HockeyAppToolWindow implements ToolWindowFactory {
     private JPanel leftPanel;
     private JPanel rightPanel;
     private JBList listCrashGroups;
+    private JBSplitter splitter;
+    private JTextPane tpStackTrace;
 
     @Override
     public void createToolWindowContent(Project project, ToolWindow toolWindow) {
         toolWindow.setTitle("HockeyApp");
         SimpleToolWindowPanel panel = new SimpleToolWindowPanel(false, true);
-        final Content content = ContentFactory.SERVICE.getInstance().createContent(panel, "COOL", false);
+        final Content content = ContentFactory.SERVICE.getInstance().createContent(panel, "", false);
         toolWindow.getContentManager().addContent(content);
 
         panel.setContent(contentPanel);
@@ -42,14 +45,15 @@ public class HockeyAppToolWindow implements ToolWindowFactory {
         Map<String,String> params = new HashMap<String, String>();
         params.put("sort","number_of_crashes");
         params.put("order","desc");
-        final LoadCrashGroupsAction action = new LoadCrashGroupsAction("8ad01ef994b37f234069d4d018fc1f5a", params, listCrashGroups);
-
+        final LoadCrashGroupsAction action = new LoadCrashGroupsAction(null, params, listCrashGroups, tpStackTrace);
         group.add(action);
         ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.UNKNOWN, group, false);
 
         toolbar.setTargetComponent(panel);
 
         panel.setToolbar(toolbar.getComponent());
+        splitter.setSplitterProportionKey("HockeyApp.ToolWindow.JBSplitter.ProportionKey");
+        tpStackTrace.setContentType("text/html");
     }
 
 

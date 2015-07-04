@@ -18,7 +18,7 @@ public class App {
     private String platform;
     @SerializedName("release_type")
     @Expose
-    private Integer releaseType;
+    private Long releaseType;
     @SerializedName("custom_release_type")
     @Expose
     private Object customReleaseType;
@@ -31,9 +31,9 @@ public class App {
     @Expose
     private Boolean featured;
     @Expose
-    private Integer role;
+    private Long role;
     @Expose
-    private Integer id;
+    private Long id;
     @SerializedName("minimum_os_version")
     @Expose
     private String minimumOsVersion;
@@ -41,7 +41,7 @@ public class App {
     @Expose
     private Object deviceFamily;
     @Expose
-    private Integer status;
+    private Long status;
     @Expose
     private String visibility;
     @Expose
@@ -113,14 +113,14 @@ public class App {
     /**
      * @return The releaseType
      */
-    public Integer getReleaseType() {
+    public Long getReleaseType() {
         return releaseType;
     }
 
     /**
      * @param releaseType The release_type
      */
-    public void setReleaseType(Integer releaseType) {
+    public void setReleaseType(Long releaseType) {
         this.releaseType = releaseType;
     }
 
@@ -183,28 +183,28 @@ public class App {
     /**
      * @return The role
      */
-    public Integer getRole() {
+    public Long getRole() {
         return role;
     }
 
     /**
      * @param role The role
      */
-    public void setRole(Integer role) {
+    public void setRole(Long role) {
         this.role = role;
     }
 
     /**
      * @return The id
      */
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
     /**
      * @param id The id
      */
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -239,14 +239,14 @@ public class App {
     /**
      * @return The status
      */
-    public Integer getStatus() {
+    public Long getStatus() {
         return status;
     }
 
     /**
      * @param status The status
      */
-    public void setStatus(Integer status) {
+    public void setStatus(Long status) {
         this.status = status;
     }
 
