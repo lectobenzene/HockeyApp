@@ -68,7 +68,7 @@ public class NetworkService {
     public static String getStackTrace(String appId, String crashId) {
         Map<String, String> params = new HashMap<String, String>();
         params.put("format", "log");
-        return getHtmlResponse(Urls.getCrash(appId, crashId), params);
+        return getFormattedResponse(Urls.getCrash(appId, crashId), params);
     }
 
     @Nullable
@@ -149,6 +149,34 @@ public class NetworkService {
             }
 
             System.out.println("Response : " + builder.toString());
+
+            try {
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return builder.toString();
+        }
+        return null;
+    }
+
+    @Nullable
+    public static String getFormattedResponse(@NotNull String url, @Nullable Map<String, String> params) {
+        final BufferedReader in = getRawResponse(url, params);
+
+        if (in != null) {
+
+            String inputLine;
+            StringBuilder builder = new StringBuilder();
+            try {
+                while ((inputLine = in.readLine()) != null) {
+                    builder.append(inputLine).append("\n");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            System.out.println("HTML Response : " + builder.toString());
 
             try {
                 in.close();

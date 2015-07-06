@@ -1,6 +1,5 @@
 package com.hockeyapp.plugin.dialogs;
 
-import com.hockeyapp.core.network.NetworkService;
 import com.hockeyapp.core.network.models.listapps.App;
 import com.hockeyapp.core.network.models.listapps.ListApps;
 import com.hockeyapp.plugin.preferences.AssociateApplicationService;
@@ -31,15 +30,19 @@ public class ListAppsDialog extends DialogWrapper {
 
     private ListApps apps;
     private App app;
+    private Project project;
+    private boolean initialized;
 
-    public ListAppsDialog(Project project) {
+    public ListAppsDialog(Project project, ListApps apps) {
         super(project);
-        initializeTable(project);
-        setTitle("Choose the Application to associate");
+        this.apps = apps;
+        this.project = project;
+        initializeTable();
+        setTitle("Choose the Application to Associate");
         init();
     }
 
-    private void initializeTable(Project project) {
+    private void initializeTable() {
         String[] columnNames = {"Title", "Platform"};
         final DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
@@ -49,7 +52,6 @@ public class ListAppsDialog extends DialogWrapper {
         };
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        apps = NetworkService.getListApps();
         if (apps != null) {
             for (App app : apps.getApps()) {
                 tableModel.addRow(new String[]{app.getTitle(), app.getPlatform()});
@@ -80,6 +82,7 @@ public class ListAppsDialog extends DialogWrapper {
                 }
             }
         }
+        initialized = true;
     }
 
     private void setInfo(int index) {
@@ -99,5 +102,9 @@ public class ListAppsDialog extends DialogWrapper {
 
     public App getApp() {
         return app;
+    }
+
+    public boolean isInitialized() {
+        return initialized;
     }
 }

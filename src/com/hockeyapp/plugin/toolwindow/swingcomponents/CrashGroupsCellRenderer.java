@@ -6,6 +6,7 @@ import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBPanel;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 /**
@@ -21,7 +22,7 @@ public class CrashGroupsCellRenderer extends JBPanel implements ListCellRenderer
     private JPanel jpCount;
     private JPanel jpDate;
     private JBLabel lblCount;
-    private JBLabel lblStatus;
+    private HARoundLabel lblStatus;
     private JBLabel lblLastCrashAt;
     private JBLabel lblVersion;
     private JBLabel lblLineNo;
@@ -32,6 +33,7 @@ public class CrashGroupsCellRenderer extends JBPanel implements ListCellRenderer
         this.add(contentPanel);
         setOpaque(true);
         setFieldOpaque(false);
+        lblStatus.setBorder(new EmptyBorder(2, 2, 2, 2));
     }
 
     private void setFieldOpaque(boolean isOpaque) {
@@ -42,7 +44,7 @@ public class CrashGroupsCellRenderer extends JBPanel implements ListCellRenderer
         jpCount.setOpaque(isOpaque);
         jpDate.setOpaque(isOpaque);
         lblCount.setOpaque(isOpaque);
-        lblStatus.setOpaque(isOpaque);
+        //lblStatus.setOpaque(isOpaque);
         lblLastCrashAt.setOpaque(isOpaque);
         lblVersion.setOpaque(isOpaque);
         lblLineNo.setOpaque(isOpaque);
@@ -61,6 +63,7 @@ public class CrashGroupsCellRenderer extends JBPanel implements ListCellRenderer
 
         lblCount.setText(String.valueOf(entry.getNumberOfCrashes()));
         lblStatus.setText(Mapper.getStatus((entry.getStatus().intValue())));
+        lblStatus.setBackground(Mapper.getStatusColor(entry.getStatus().intValue()));
 
         lblClassMethod.setText(entry.getClass_() + "." + entry.getMethod());
         lblLineNo.setText("line " + entry.getLine());
