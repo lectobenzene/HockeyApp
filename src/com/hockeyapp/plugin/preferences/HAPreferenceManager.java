@@ -30,7 +30,7 @@ public class HAPreferenceManager {
     @Nullable
     public String getAppId(Project project) {
         System.out.println("project = " + project);
-        final AssociateApplicationService service = ServiceManager.getService(project, AssociateApplicationService.class);
+        final HAPreferenceService service = ServiceManager.getService(project, HAPreferenceService.class);
         return service.getState();
     }
 }

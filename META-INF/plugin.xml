@@ -26,7 +26,8 @@
         <applicationConfigurable id="HockeyApp.HockeyAppSettings"
                                  instance="com.hockeyapp.plugin.preferences.configurable.HockeyAppSettings"/>
         <applicationService id="HockeyApp.PreferenceService" serviceImplementation="com.hockeyapp.plugin.preferences.PreferenceService"/>
-        <projectService id="HockeyApp.AssociateApplicationService" serviceImplementation="com.hockeyapp.plugin.preferences.AssociateApplicationService"/>
+        <projectService id="HockeyApp.AssociateApplicationService"
+                        serviceImplementation="com.hockeyapp.plugin.preferences.HAPreferenceService"/>
         <toolWindow id="HockeyApp" anchor="bottom" factoryClass="com.hockeyapp.plugin.toolwindow.HockeyAppToolWindow" icon="/icons/hockeyappToolWindow.png"/>
     </extensions>
 

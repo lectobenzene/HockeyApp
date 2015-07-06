@@ -2,7 +2,7 @@ package com.hockeyapp.plugin.dialogs;
 
 import com.hockeyapp.core.network.models.listapps.App;
 import com.hockeyapp.core.network.models.listapps.ListApps;
-import com.hockeyapp.plugin.preferences.AssociateApplicationService;
+import com.hockeyapp.plugin.preferences.HAPreferenceService;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -71,7 +71,7 @@ public class ListAppsDialog extends DialogWrapper {
         // Default selection to first row
         table.setRowSelectionInterval(0,0);
         // Setting default selection if the project is already associated with a hockeyapp application
-        final AssociateApplicationService service = ServiceManager.getService(project, AssociateApplicationService.class);
+        final HAPreferenceService service = ServiceManager.getService(project, HAPreferenceService.class);
         final String publicIdentifier = service.getState();
         if (publicIdentifier != null && apps != null) {
             final List<App> listOfApps = apps.getApps();
