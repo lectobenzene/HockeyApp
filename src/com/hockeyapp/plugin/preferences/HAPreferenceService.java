@@ -1,5 +1,6 @@
 package com.hockeyapp.plugin.preferences;
 
+import com.hockeyapp.plugin.preferences.models.DataStore;
 import com.intellij.openapi.components.*;
 import org.jetbrains.annotations.Nullable;
 
@@ -9,18 +10,18 @@ import org.jetbrains.annotations.Nullable;
 @State(name = "HAPreferenceService", storages = {
         @Storage(id = "other", file = StoragePathMacros.PROJECT_CONFIG_DIR + "/hockeyapp.xml", scheme = StorageScheme.DIRECTORY_BASED)
 })
-public class HAPreferenceService implements PersistentStateComponent<String> {
+public class HAPreferenceService implements PersistentStateComponent<DataStore> {
 
-    private String publicIdentifier;
+    private DataStore dataStore;
 
     @Nullable
     @Override
-    public String getState() {
-        return publicIdentifier;
+    public DataStore getState() {
+        return dataStore;
     }
 
     @Override
-    public void loadState(String state) {
-        this.publicIdentifier = state;
+    public void loadState(DataStore state) {
+        this.dataStore = state;
     }
 }

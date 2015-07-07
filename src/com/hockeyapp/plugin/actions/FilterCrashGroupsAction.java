@@ -33,12 +33,13 @@ public class FilterCrashGroupsAction extends ToggleAction {
 
     @Override
     public boolean isSelected(AnActionEvent e) {
-        return true;
+        System.out.println("FilterCrashGroupsAction isSelected");
+        return false;
     }
 
     @Override
     public void setSelected(AnActionEvent e, boolean state) {
-
+        System.out.println("FilterCrashGroupsAction state = " + state);
     }
 
     @Override

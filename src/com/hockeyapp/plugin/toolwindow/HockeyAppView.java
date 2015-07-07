@@ -87,15 +87,19 @@ public class HockeyAppView {
         if (crashGroups != null) {
             final List<CrashReason> crashReasons = crashGroups.getCrashReasons();
             if (listCrashGroups != null) {
-                listCrashGroups.setCellRenderer(new CrashGroupsCellRenderer());
                 listCrashGroups.setListData(new Vector<CrashReason>(crashReasons));
-                listCrashGroups.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-                listCrashGroups.getSelectionModel().addListSelectionListener(listSelectionListener);
             }
             if (console != null) {
                 console.clear();
             }
         }
+    }
+
+    public void initUI() {
+        listSelectionListener = getSelectionListener();
+        listCrashGroups.setCellRenderer(new CrashGroupsCellRenderer());
+        listCrashGroups.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        listCrashGroups.getSelectionModel().addListSelectionListener(listSelectionListener);
     }
 
     private void openFileInEditor(CrashReason selCrashReason) {
@@ -146,7 +150,7 @@ public class HockeyAppView {
     @NotNull
     private ListSelectionListener getSelectionListener() {
         if (listSelectionListener == null) {
-
+            System.out.println("listSelectionListener = " + listSelectionListener);
             listSelectionListener = new ListSelectionListener() {
 
                 @Override

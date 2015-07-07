@@ -1,7 +1,6 @@
 package com.hockeyapp.plugin.preferences.configurable;
 
-import com.hockeyapp.plugin.preferences.PreferenceService;
-import com.intellij.openapi.components.ServiceManager;
+import com.hockeyapp.plugin.preferences.HAPreferenceManager;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import org.jetbrains.annotations.Nls;
@@ -31,9 +30,10 @@ public class HockeyAppSettings implements Configurable {
     @Nullable
     @Override
     public JComponent createComponent() {
-        final PreferenceService service = ServiceManager.getService(PreferenceService.class);
-        if (service != null) {
-            textApiToken.setText(service.getState());
+
+        final String apiToken = HAPreferenceManager.getInstance().getApiToken();
+        if (apiToken != null) {
+            textApiToken.setText(apiToken);
         }
         return contentPanel;
     }
@@ -46,13 +46,7 @@ public class HockeyAppSettings implements Configurable {
 
     @Override
     public void apply() throws ConfigurationException {
-        storeData();
-    }
-
-    private void storeData() {
-        final PreferenceService service = ServiceManager.getService(PreferenceService.class);
-        service.loadState(textApiToken.getText());
-        System.out.println("service.getState() = " + service.getState());
+        HAPreferenceManager.getInstance().setApiToken(textApiToken.getText());
     }
 
     @Override

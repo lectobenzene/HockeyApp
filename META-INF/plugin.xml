@@ -48,6 +48,8 @@
         </action>
         <action id="HockeyApp.LoadCrashGroupsAction" class="com.hockeyapp.plugin.actions.LoadCrashGroupsAction"
                 text="Force Refresh" description="Clears cache and reloads the Crash Groups from Server"/>
+        <action id="HockeyApp.AutoSyncAction" class="com.hockeyapp.plugin.actions.AutoSyncAction" text="AutoSyncAction"
+                description="Continually syncs with Hockey App and updates the crash groups"/>
     </actions>
 
 </idea-plugin>

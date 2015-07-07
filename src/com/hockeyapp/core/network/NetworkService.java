@@ -5,12 +5,16 @@ import com.hockeyapp.core.network.models.crash.CrashInfo;
 import com.hockeyapp.core.network.models.crashreasons.CrashGroups;
 import com.hockeyapp.core.network.models.listapps.ListApps;
 import com.hockeyapp.core.network.models.listcrashes.ListCrashes;
-import com.hockeyapp.plugin.preferences.PreferenceService;
-import com.intellij.openapi.components.ServiceManager;
+import com.hockeyapp.plugin.preferences.HAPreferenceManager;
+import com.hockeyapp.plugin.preferences.configurable.HockeyAppSettings;
+import com.hockeyapp.plugin.toolwindow.HockeyAppView;
+import com.intellij.notification.*;
+import com.intellij.openapi.options.ShowSettingsUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.net.ssl.HttpsURLConnection;
+import javax.swing.event.HyperlinkEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -25,6 +29,7 @@ import java.util.Map;
 public class NetworkService {
 
     public static final int RESPONSE_CODE_OK = 200;
+    public static final String GROUP_NOTIFICATION_ID = "HockeyApp";
 
     public static Gson gson;
 
@@ -110,18 +115,20 @@ public class NetworkService {
             urlConnection = (HttpsURLConnection) requestURL.openConnection();
 
             urlConnection.setRequestMethod("GET");
-            urlConnection.setRequestProperty("X-HockeyAppToken", getApiToken());
+            final String apiToken = getApiToken();
+            urlConnection.setRequestProperty("X-HockeyAppToken", apiToken);
 
+            if (apiToken != null) {
+                final int responseCode = urlConnection.getResponseCode();
 
-            final int responseCode = urlConnection.getResponseCode();
+                System.out.println("Request URL : " + urlConnection.getURL());
+                System.out.println("Response code : " + responseCode);
+                if (responseCode != RESPONSE_CODE_OK) {
+                    return null;
+                }
 
-            System.out.println("Request URL : " + urlConnection.getURL());
-            System.out.println("Response code : " + responseCode);
-            if (responseCode != RESPONSE_CODE_OK) {
-                return null;
+                in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
             }
-
-            in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
             return in;
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -219,9 +226,21 @@ public class NetworkService {
         return null;
     }
 
+    @Nullable
     private static String getApiToken() {
-        final PreferenceService service = ServiceManager.getService(PreferenceService.class);
-        //return service.getState();
-        return "54ab859f56eb4836ad6f4b6663e859cd";
+        final String apiToken = HAPreferenceManager.getInstance().getApiToken();
+        if (apiToken == null || apiToken.isEmpty()) {
+            final NotificationGroup notificationGroup = NotificationGroup.balloonGroup(GROUP_NOTIFICATION_ID);
+            final Notification notification = notificationGroup.createNotification("Configure API Token", "Provide your HockeyApp API Token in <a href=\"\">Settings</a>", NotificationType.WARNING, new NotificationListener() {
+                @Override
+                public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
+                    System.out.println("notification.getContent() = " + notification.getContent());
+                    ShowSettingsUtil.getInstance().editConfigurable(HockeyAppView.getInstance().getProject(), new HockeyAppSettings());
+                }
+            });
+            Notifications.Bus.notify(notification);
+
+        }
+        return apiToken;
     }
 }

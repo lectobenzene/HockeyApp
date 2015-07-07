@@ -1,9 +1,6 @@
 package com.hockeyapp.plugin.toolwindow;
 
-import com.hockeyapp.plugin.actions.AssociateWithHockeyAppAction;
-import com.hockeyapp.plugin.actions.FilterCrashGroupsAction;
-import com.hockeyapp.plugin.actions.LoadCrashGroupsAction;
-import com.hockeyapp.plugin.actions.SortCrashGroupsAction;
+import com.hockeyapp.plugin.actions.*;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.icons.AllIcons;
@@ -13,11 +10,11 @@ import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
-import com.intellij.ui.JBColor;
 import com.intellij.ui.JBSplitter;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
@@ -36,31 +33,26 @@ public class HockeyAppToolWindow implements ToolWindowFactory {
     private JPanel rightToolbarPanel;
     private JPanel leftToolbarPanel;
     private ConsoleView console;
+    private Project project;
 
     @Override
-    public void createToolWindowContent(Project project, ToolWindow toolWindow) {
+    public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
+        this.project = project;
         toolWindow.setTitle("HockeyApp");
 
         SimpleToolWindowPanel panel = new SimpleToolWindowPanel(false, true);
         final Content content = ContentFactory.SERVICE.getInstance().createContent(panel, "", false);
         toolWindow.getContentManager().addContent(content);
         panel.setContent(contentPanel);
-        splitter.setSplitterProportionKey("HockeyApp.ToolWindow.JBSplitter.ProportionKey");
-        splitter.setBackground(JBColor.BLACK);
-        splitter.setForeground(JBColor.BLACK);
 
-        console = TextConsoleBuilderFactory.getInstance().createBuilder(project).getConsole();
-        stacktracePanel.add(console.getComponent());
 
-        // Initialize Project field
-        final HockeyAppView instance = HockeyAppView.getInstance();
-        instance.setProject(project);
-        instance.setListCrashGroups(listCrashGroups);
-        instance.setConsole(console);
+        initUI();
 
         // All Action
         final AnAction loadCrashGroupsAction = ActionManager.getInstance().getAction(LoadCrashGroupsAction.ACTION_ID);
         final AnAction associateWithHockeyAppAction = ActionManager.getInstance().getAction(AssociateWithHockeyAppAction.ACTION_ID);
+        final AnAction autoSyncAction = ActionManager.getInstance().getAction(AutoSyncAction.ACTION_ID);
+//        final AutoSyncAction autoSyncAction = new AutoSyncAction();
         final SortCrashGroupsAction sortCountAction = new SortCrashGroupsAction("Sort by Count", "Sorts the Crash groups by number of crashes", AllIcons.ObjectBrowser.SortedByUsage, SortCrashGroupsAction.SORT_COUNT);
         final SortCrashGroupsAction sortDescriptionAction = new SortCrashGroupsAction("Sort by Description", "Sorts the Crash groups by Description", AllIcons.ObjectBrowser.Sorted, SortCrashGroupsAction.SORT_DESCRIPTION);
         final SortCrashGroupsAction sortDateAction = new SortCrashGroupsAction("Sort by Date", "Sorts the Crash groups by last crash date", IconLoader.getIcon("/icons/sortbyDuration.png"), SortCrashGroupsAction.SORT_LAST_CRASH);
@@ -78,7 +70,7 @@ public class HockeyAppToolWindow implements ToolWindowFactory {
 
         // All Groups
         DefaultActionGroup mainGroup = new DefaultActionGroup();
-        mainGroup.add(loadCrashGroupsAction);
+        mainGroup.addAll(loadCrashGroupsAction, autoSyncAction);
         mainGroup.addSeparator();
         mainGroup.add(associateWithHockeyAppAction);
 
@@ -98,7 +90,19 @@ public class HockeyAppToolWindow implements ToolWindowFactory {
         rightToolbar.setTargetComponent(rightToolbarPanel);
         rightToolbarPanel.add(rightToolbar.getComponent());
 
-        instance.fillCrashGroups(false);
+        HockeyAppView.getInstance().fillCrashGroups(false);
+    }
+
+    private void initUI() {
+        splitter.setSplitterProportionKey("HockeyApp.ToolWindow.JBSplitter.ProportionKey");
+        console = TextConsoleBuilderFactory.getInstance().createBuilder(project).getConsole();
+        stacktracePanel.add(console.getComponent());
+        // Initialize Project field
+        final HockeyAppView instance = HockeyAppView.getInstance();
+        instance.setProject(project);
+        instance.setListCrashGroups(listCrashGroups);
+        instance.setConsole(console);
+        instance.initUI();
     }
 
 }
