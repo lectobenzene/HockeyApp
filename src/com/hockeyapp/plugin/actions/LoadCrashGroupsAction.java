@@ -1,5 +1,6 @@
 package com.hockeyapp.plugin.actions;
 
+import com.hockeyapp.core.network.AutoSyncManager;
 import com.hockeyapp.plugin.preferences.HAPreferenceManager;
 import com.hockeyapp.plugin.toolwindow.HockeyAppView;
 import com.intellij.icons.AllIcons;
@@ -54,6 +55,13 @@ public class LoadCrashGroupsAction extends AnAction {
             public void run(@NotNull ProgressIndicator indicator) {
                 indicator.setText("Obtaining Crash Groups");
                 HockeyAppView.getInstance().fillCrashGroups(true);
+            }
+
+            @Override
+            public void onSuccess() {
+                if (HAPreferenceManager.getInstance().isAutoSync(project)) {
+                    AutoSyncManager.getInstance().syncCrashReasons();
+                }
             }
         });
 

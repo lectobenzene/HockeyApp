@@ -102,6 +102,7 @@ public class NetworkService {
         BufferedReader in = null;
         try {
             if (params != null && !params.isEmpty()) {
+                params.put("per_page", "100");
                 StringBuilder builder = new StringBuilder(url);
                 builder.append("?");
                 for (String key : params.keySet()) {

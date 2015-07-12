@@ -1,5 +1,6 @@
 package com.hockeyapp.plugin.actions;
 
+import com.hockeyapp.core.network.AutoSyncManager;
 import com.hockeyapp.core.network.NetworkService;
 import com.hockeyapp.core.network.models.listapps.App;
 import com.hockeyapp.core.network.models.listapps.ListApps;
@@ -66,6 +67,13 @@ public class AssociateWithHockeyAppAction extends AnAction {
             @Override
             public void run(@NotNull ProgressIndicator indicator) {
                 HockeyAppView.getInstance().fillCrashGroups(true);
+            }
+
+            @Override
+            public void onSuccess() {
+                if (HAPreferenceManager.getInstance().isAutoSync(project)) {
+                    AutoSyncManager.getInstance().syncCrashReasons();
+                }
             }
         });
     }

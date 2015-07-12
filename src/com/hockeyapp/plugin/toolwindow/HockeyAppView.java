@@ -1,5 +1,6 @@
 package com.hockeyapp.plugin.toolwindow;
 
+import com.hockeyapp.core.network.AutoSyncManager;
 import com.hockeyapp.core.network.NetworkService;
 import com.hockeyapp.core.network.models.crashreasons.CrashGroups;
 import com.hockeyapp.core.network.models.crashreasons.CrashReason;
@@ -19,6 +20,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.search.PsiShortNamesCache;
+import com.intellij.ui.CollectionListModel;
 import com.intellij.ui.components.JBList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,10 +28,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 /**
  * Created by tsaravana on 7/5/2015.
@@ -43,6 +43,7 @@ public class HockeyAppView {
     private JBList listCrashGroups;
     private ConsoleView console;
     private ListSelectionListener listSelectionListener;
+    private CollectionListModel<CrashReason> listModel;
 
     private HockeyAppView() {
     }
@@ -60,14 +61,11 @@ public class HockeyAppView {
 
     public void fillCrashGroups(Map<String, String> params, boolean forceFill) {
         if (forceFill) {
-            if (params == null) {
-                params = new HashMap<String, String>();
-                params.put("sort", "number_of_crashes");
-                params.put("order", "desc");
+            if (listModel != null) {
+                listModel.removeAll();
             }
-            obtainCrashGroups(params);
+            AutoSyncManager.getInstance().forceSyncCrashReasons();
         }
-        populateCrashGroups(getSelectionListener());
     }
 
     public void fillCrashGroups(boolean forceFill) {
@@ -78,25 +76,14 @@ public class HockeyAppView {
         fillCrashGroups(params, true);
     }
 
-    private void obtainCrashGroups(Map<String, String> params) {
-        final String appId = HAPreferenceManager.getInstance().getAppId(project);
-        crashGroups = NetworkService.getCrashReasons(appId, params);
-    }
-
-    private void populateCrashGroups(ListSelectionListener listSelectionListener) {
-        if (crashGroups != null) {
-            final List<CrashReason> crashReasons = crashGroups.getCrashReasons();
-            if (listCrashGroups != null) {
-                listCrashGroups.setListData(new Vector<CrashReason>(crashReasons));
-            }
-            if (console != null) {
-                console.clear();
-            }
-        }
+    public void fillCrashGroups(List<CrashReason> crashReasonsBunch) {
+        listModel.add(crashReasonsBunch);
     }
 
     public void initUI() {
         listSelectionListener = getSelectionListener();
+        listModel = new CollectionListModel<CrashReason>();
+        listCrashGroups.setModel(listModel);
         listCrashGroups.setCellRenderer(new CrashGroupsCellRenderer());
         listCrashGroups.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         listCrashGroups.getSelectionModel().addListSelectionListener(listSelectionListener);
@@ -150,7 +137,6 @@ public class HockeyAppView {
     @NotNull
     private ListSelectionListener getSelectionListener() {
         if (listSelectionListener == null) {
-            System.out.println("listSelectionListener = " + listSelectionListener);
             listSelectionListener = new ListSelectionListener() {
 
                 @Override
@@ -209,5 +195,10 @@ public class HockeyAppView {
 
     public void setProject(Project project) {
         this.project = project;
+    }
+
+    public void intimate(List<CrashReason> crashReasons) {
+        listModel.removeAll();
+        listModel.add(crashReasons);
     }
 }

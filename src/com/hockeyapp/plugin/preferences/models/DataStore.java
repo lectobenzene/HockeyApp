@@ -5,7 +5,8 @@ package com.hockeyapp.plugin.preferences.models;
  */
 public class DataStore {
     private String appId;
-    private int filterCrashGroups;
+    private int filterCrashGroups = 1; // FILTER_ALL
+    private boolean autoSync = true; // Perform Auto Sync by default
 
     public String getAppId() {
         return appId;
@@ -21,5 +22,13 @@ public class DataStore {
 
     public void setFilterCrashGroups(int filterCrashGroups) {
         this.filterCrashGroups = filterCrashGroups;
+    }
+
+    public boolean isAutoSync() {
+        return autoSync;
+    }
+
+    public void setAutoSync(boolean autoSync) {
+        this.autoSync = autoSync;
     }
 }

@@ -1,5 +1,7 @@
 package com.hockeyapp.plugin.toolwindow;
 
+import com.hockeyapp.core.network.AutoSyncManager;
+import com.hockeyapp.core.network.models.crashreasons.CrashReason;
 import com.hockeyapp.plugin.actions.*;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.ui.ConsoleView;
@@ -17,6 +19,7 @@ import com.intellij.ui.content.ContentFactory;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.List;
 
 /**
  * Created by tsaravana on 6/21/2015.
@@ -76,7 +79,7 @@ public class HockeyAppToolWindow implements ToolWindowFactory {
 
         DefaultActionGroup leftGroup = new DefaultActionGroup(sortCountAction, sortDescriptionAction, sortDateAction);
         leftGroup.addSeparator();
-        leftGroup.addAll(filterAllAction, filterOpenAction, filterResolvedAction, filterIgnoredAction);
+        leftGroup.addAll(filterOpenAction, filterResolvedAction, filterIgnoredAction);
 
         ActionToolbar mainToolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.UNKNOWN, mainGroup, false);
         mainToolbar.setTargetComponent(panel);
@@ -90,7 +93,17 @@ public class HockeyAppToolWindow implements ToolWindowFactory {
         rightToolbar.setTargetComponent(rightToolbarPanel);
         rightToolbarPanel.add(rightToolbar.getComponent());
 
-        HockeyAppView.getInstance().fillCrashGroups(false);
+        setListeners();
+        HockeyAppView.getInstance().fillCrashGroups(AutoSyncManager.getInstance().getCrashReasons());
+    }
+
+    private void setListeners() {
+        AutoSyncManager.getInstance().addListener(new AutoSyncManager.AutoSyncListener() {
+            @Override
+            public void update(List<CrashReason> crashReasonsBunch) {
+                HockeyAppView.getInstance().fillCrashGroups(crashReasonsBunch);
+            }
+        });
     }
 
     private void initUI() {

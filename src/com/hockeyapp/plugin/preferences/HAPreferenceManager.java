@@ -42,6 +42,18 @@ public class HAPreferenceManager {
     }
 
     @Nullable
+    public boolean isAutoSync(Project project) {
+        final DataStore dataStore = getDataStore(project);
+        return dataStore.isAutoSync();
+    }
+
+    public void setAutoSync(Project project, boolean autoSync) {
+        final DataStore dataStore = getDataStore(project);
+        dataStore.setAutoSync(autoSync);
+        setDataStore(project, dataStore);
+    }
+
+    @Nullable
     public String getAppId(Project project) {
         final DataStore dataStore = getDataStore(project);
         return dataStore.getAppId();
