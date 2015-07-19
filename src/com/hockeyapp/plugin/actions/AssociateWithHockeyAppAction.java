@@ -53,7 +53,6 @@ public class AssociateWithHockeyAppAction extends AnAction {
                     }
 
                     if (app != null) {
-                        System.out.println("app.getId() = " + app.getPublicIdentifier());
                         HAPreferenceManager.getInstance().setAppId(project, app.getPublicIdentifier());
                     }
                     fillCrashGroups();

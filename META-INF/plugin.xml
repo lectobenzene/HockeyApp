@@ -1,16 +1,21 @@
 <idea-plugin version="2">
     <id>com.hockeyapp.hockeyapp</id>
     <name>HockeyApp</name>
-    <version>1.0</version>
+    <version>0.1</version>
     <vendor email="tsaravana@athenahealth.com" url="http://www.athenahealth.com">athenaHealth</vendor>
 
     <description><![CDATA[
-
+        HockeyApp plugin allows you to interact with HockeyApp from the IDE itself, rather than switching between the IDE and Browser.
     ]]></description>
 
     <change-notes><![CDATA[
-
-    ]]>
+        <b>Version 0.1</b> <br>
+        <ol>
+            <li>View all crash groups, filter them and sort them.</li>
+            <li>View stackTrace of particular crash, goToEditor from that</li>
+            <li>Copy description to clipboard</li>
+        </ol>
+        ]]>
     </change-notes>
 
     <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
@@ -25,10 +30,12 @@
     <extensions defaultExtensionNs="com.intellij">
         <applicationConfigurable id="HockeyApp.HockeyAppSettings"
                                  instance="com.hockeyapp.plugin.preferences.configurable.HockeyAppSettings"/>
-        <applicationService id="HockeyApp.PreferenceService" serviceImplementation="com.hockeyapp.plugin.preferences.PreferenceService"/>
+        <applicationService id="HockeyApp.PreferenceService"
+                            serviceImplementation="com.hockeyapp.plugin.preferences.PreferenceService"/>
         <projectService id="HockeyApp.AssociateApplicationService"
                         serviceImplementation="com.hockeyapp.plugin.preferences.HAPreferenceService"/>
-        <toolWindow id="HockeyApp" anchor="bottom" factoryClass="com.hockeyapp.plugin.toolwindow.HockeyAppToolWindow" icon="/icons/hockeyappToolWindow.png"/>
+        <toolWindow id="HockeyApp" anchor="bottom" factoryClass="com.hockeyapp.plugin.toolwindow.HockeyAppToolWindow"
+                    icon="/icons/hockeyappToolWindow.png"/>
     </extensions>
 
     <application-components>
@@ -50,6 +57,8 @@
                 text="Force Refresh" description="Clears cache and reloads the Crash Groups from Server"/>
         <action id="HockeyApp.AutoSyncAction" class="com.hockeyapp.plugin.actions.AutoSyncAction" text="Auto Sync"
                 description="Continually syncs with Hockey App and updates the crash groups"/>
+        <action id="CopyDescriptionAction" class="com.hockeyapp.plugin.actions.CopyDescriptionAction"
+                text="Copy Description" description="Copies the description of the crash to clipboard"/>
     </actions>
 
 </idea-plugin>

@@ -122,8 +122,8 @@ public class NetworkService {
             if (apiToken != null) {
                 final int responseCode = urlConnection.getResponseCode();
 
-                System.out.println("Request URL : " + urlConnection.getURL());
-                System.out.println("Response code : " + responseCode);
+                // System.out.println("Request URL : " + urlConnection.getURL());
+                // System.out.println("Response code : " + responseCode);
                 if (responseCode != RESPONSE_CODE_OK) {
                     return null;
                 }
@@ -156,7 +156,7 @@ public class NetworkService {
                 e.printStackTrace();
             }
 
-            System.out.println("Response : " + builder.toString());
+            // System.out.println("Response : " + builder.toString());
 
             try {
                 in.close();
@@ -184,7 +184,7 @@ public class NetworkService {
                 e.printStackTrace();
             }
 
-            System.out.println("HTML Response : " + builder.toString());
+            // System.out.println("HTML Response : " + builder.toString());
 
             try {
                 in.close();
@@ -215,7 +215,7 @@ public class NetworkService {
                 e.printStackTrace();
             }
 
-            System.out.println("HTML Response : " + builder.toString());
+            // System.out.println("HTML Response : " + builder.toString());
 
             try {
                 in.close();
@@ -235,7 +235,6 @@ public class NetworkService {
             final Notification notification = notificationGroup.createNotification("Configure API Token", "Provide your HockeyApp API Token in <a href=\"\">Settings</a>", NotificationType.WARNING, new NotificationListener() {
                 @Override
                 public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
-                    System.out.println("notification.getContent() = " + notification.getContent());
                     ShowSettingsUtil.getInstance().editConfigurable(HockeyAppView.getInstance().getProject(), new HockeyAppSettings());
                 }
             });

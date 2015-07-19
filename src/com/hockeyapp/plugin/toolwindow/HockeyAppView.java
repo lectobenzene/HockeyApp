@@ -18,7 +18,6 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.search.PsiShortNamesCache;
 import com.intellij.ui.CollectionListModel;
 import com.intellij.ui.components.JBList;
@@ -44,6 +43,7 @@ public class HockeyAppView {
     private ConsoleView console;
     private ListSelectionListener listSelectionListener;
     private CollectionListModel<CrashReason> listModel;
+    private String logDescription;
 
     private HockeyAppView() {
     }
@@ -97,8 +97,6 @@ public class HockeyAppView {
             final PsiFile[] filesByName = PsiShortNamesCache.getInstance(project).getFilesByName(file);
             VirtualFile vFile = null;
             for (PsiFile psiFile : filesByName) {
-                System.out.println("psiFile.getName() = " + psiFile.getName());
-                System.out.println("psiFile.getPackage " + ((PsiJavaFile) psiFile).getPackageName());
                 vFile = psiFile.getVirtualFile();
             }
             if (vFile != null) {
@@ -112,8 +110,10 @@ public class HockeyAppView {
 
     private void populateStackTrace(String crashId) {
         if (crashId != null) {
+            HockeyAppView.getInstance().setLogDescription(null);
             final String stackTrace = NetworkService.getStackTrace(HAPreferenceManager.getInstance().getAppId(project), crashId);
-            System.out.println("stackTrace = " + stackTrace);
+            final String logDescription = NetworkService.getLogDescription(HAPreferenceManager.getInstance().getAppId(project), crashId);
+            HockeyAppView.getInstance().setLogDescription(logDescription);
             if (stackTrace != null) {
                 console.clear();
                 console.print(stackTrace, ConsoleViewContentType.ERROR_OUTPUT);
@@ -128,7 +128,6 @@ public class HockeyAppView {
             final List<Crash> crashes = listCrashes.getCrashes();
             final Crash crash = crashes.get(0);
             final Long crashId = crash.getId();
-            System.out.println("crashId = " + crashId);
             return String.valueOf(crashId);
         }
         return null;
@@ -144,7 +143,7 @@ public class HockeyAppView {
                     if (e.getValueIsAdjusting()) {
                         final CrashReason selCrashReason = (CrashReason) listCrashGroups.getSelectedValue();
                         final Long crashGroupId = selCrashReason.getId();
-                        System.out.println("Crash Group ID = " + crashGroupId);
+                        clearOutStackTrace();
                         openFileInEditor(selCrashReason);
 
                         ProgressManager.getInstance().run(new Task.Backgroundable(project, "Get Crash Info", true) {
@@ -155,6 +154,7 @@ public class HockeyAppView {
                                 indicator.setFraction(0.3);
                                 indicator.setText("Gathering the Stacktrace information");
                                 populateStackTrace(crashId);
+
                                 indicator.setFraction(1);
                             }
                         });
@@ -163,6 +163,11 @@ public class HockeyAppView {
             };
         }
         return listSelectionListener;
+    }
+
+    private void clearOutStackTrace() {
+        setLogDescription(null);
+        getConsole().clear();
     }
 
     public CrashGroups getCrashGroups() {
@@ -197,8 +202,17 @@ public class HockeyAppView {
         this.project = project;
     }
 
-    public void intimate(List<CrashReason> crashReasons) {
+    public void intimate() {
         listModel.removeAll();
-        listModel.add(crashReasons);
+        final List<CrashReason> filteredCrashReasons = AutoSyncManager.getInstance().getFilteredCrashReasons();
+        listModel.add(filteredCrashReasons);
+    }
+
+    public String getLogDescription() {
+        return logDescription;
+    }
+
+    public void setLogDescription(String logDescription) {
+        this.logDescription = logDescription;
     }
 }

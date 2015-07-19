@@ -55,7 +55,6 @@ public class HockeyAppToolWindow implements ToolWindowFactory {
         final AnAction loadCrashGroupsAction = ActionManager.getInstance().getAction(LoadCrashGroupsAction.ACTION_ID);
         final AnAction associateWithHockeyAppAction = ActionManager.getInstance().getAction(AssociateWithHockeyAppAction.ACTION_ID);
         final AnAction autoSyncAction = ActionManager.getInstance().getAction(AutoSyncAction.ACTION_ID);
-//        final AutoSyncAction autoSyncAction = new AutoSyncAction();
         final SortCrashGroupsAction sortCountAction = new SortCrashGroupsAction("Sort by Count", "Sorts the Crash groups by number of crashes", AllIcons.ObjectBrowser.SortedByUsage, SortCrashGroupsAction.SORT_COUNT);
         final SortCrashGroupsAction sortDescriptionAction = new SortCrashGroupsAction("Sort by Description", "Sorts the Crash groups by Description", AllIcons.ObjectBrowser.Sorted, SortCrashGroupsAction.SORT_DESCRIPTION);
         final SortCrashGroupsAction sortDateAction = new SortCrashGroupsAction("Sort by Date", "Sorts the Crash groups by last crash date", IconLoader.getIcon("/icons/sortbyDuration.png"), SortCrashGroupsAction.SORT_LAST_CRASH);
@@ -70,16 +69,20 @@ public class HockeyAppToolWindow implements ToolWindowFactory {
         ActionManager.getInstance().registerAction(FilterCrashGroupsAction.ACTION_FILTER_OPEN_ID, filterOpenAction);
         ActionManager.getInstance().registerAction(FilterCrashGroupsAction.ACTION_FILTER_RESOLVED_ID, filterResolvedAction);
         ActionManager.getInstance().registerAction(FilterCrashGroupsAction.ACTION_FILTER_IGNORED_ID, filterIgnoredAction);
+        final AnAction copyDescriptionAction = ActionManager.getInstance().getAction(CopyDescriptionAction.ACTION_ID);
+
 
         // All Groups
         DefaultActionGroup mainGroup = new DefaultActionGroup();
-        mainGroup.addAll(loadCrashGroupsAction, autoSyncAction);
+        mainGroup.addAll(loadCrashGroupsAction);
         mainGroup.addSeparator();
         mainGroup.add(associateWithHockeyAppAction);
 
-        DefaultActionGroup leftGroup = new DefaultActionGroup(sortCountAction, sortDescriptionAction, sortDateAction);
+        DefaultActionGroup leftGroup = new DefaultActionGroup(filterOpenAction, filterResolvedAction, filterIgnoredAction);
         leftGroup.addSeparator();
-        leftGroup.addAll(filterOpenAction, filterResolvedAction, filterIgnoredAction);
+        leftGroup.addAll(sortCountAction, sortDescriptionAction, sortDateAction);
+
+        DefaultActionGroup rightGroup = new DefaultActionGroup(copyDescriptionAction);
 
         ActionToolbar mainToolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.UNKNOWN, mainGroup, false);
         mainToolbar.setTargetComponent(panel);
@@ -89,7 +92,7 @@ public class HockeyAppToolWindow implements ToolWindowFactory {
         leftToolbar.setTargetComponent(leftToolbarPanel);
         leftToolbarPanel.add(leftToolbar.getComponent());
 
-        ActionToolbar rightToolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.UNKNOWN, mainGroup, true);
+        ActionToolbar rightToolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.UNKNOWN, rightGroup, true);
         rightToolbar.setTargetComponent(rightToolbarPanel);
         rightToolbarPanel.add(rightToolbar.getComponent());
 

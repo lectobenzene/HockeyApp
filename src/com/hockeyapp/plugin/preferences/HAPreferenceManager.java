@@ -29,6 +29,40 @@ public class HAPreferenceManager {
         return instance;
     }
 
+    public boolean isFilterIgnored(Project project) {
+        final DataStore dataStore = getDataStore(project);
+        return dataStore.isFilterIgnored();
+    }
+
+    public void setFilterIgnored(Project project, boolean flag) {
+        final DataStore dataStore = getDataStore(project);
+        dataStore.setFilterIgnored(flag);
+        setDataStore(project, dataStore);
+    }
+
+    public boolean isFilterResolved(Project project) {
+        final DataStore dataStore = getDataStore(project);
+        return dataStore.isFilterResolved();
+    }
+
+    public void setFilterResolved(Project project, boolean flag) {
+        final DataStore dataStore = getDataStore(project);
+        dataStore.setFilterResolved(flag);
+        setDataStore(project, dataStore);
+    }
+
+    public boolean isFilterOpen(Project project) {
+        final DataStore dataStore = getDataStore(project);
+        return dataStore.isFilterOpen();
+    }
+
+    public void setFilterOpen(Project project, boolean flag) {
+        final DataStore dataStore = getDataStore(project);
+        dataStore.setFilterOpen(flag);
+        setDataStore(project, dataStore);
+    }
+
+
     @Nullable
     public String getApiToken() {
         final PreferenceStore store = getPreferenceStore();
@@ -41,7 +75,6 @@ public class HAPreferenceManager {
         setPreferenceStore(store);
     }
 
-    @Nullable
     public boolean isAutoSync(Project project) {
         final DataStore dataStore = getDataStore(project);
         return dataStore.isAutoSync();

@@ -30,8 +30,6 @@ public class FilterCrashGroupsAction extends ToggleAction {
     private Project project;
     private String appId;
 
-    private boolean isSelected;
-
     public FilterCrashGroupsAction(String text, String description, Icon icon, int type) {
         super(text, description, icon);
         this.type = type;
@@ -39,48 +37,46 @@ public class FilterCrashGroupsAction extends ToggleAction {
 
     @Override
     public boolean isSelected(AnActionEvent e) {
-        System.out.println("FilterCrashGroupsAction isSelected = " + isSelected);
-        return isSelected;
+        if (e.getProject() != null) {
+            switch (type) {
+                case FILTER_OPEN:
+                    final boolean filterOpen = HAPreferenceManager.getInstance().isFilterOpen(e.getProject());
+                    return filterOpen;
+                case FILTER_IGNORED:
+                    final boolean filterIgnored = HAPreferenceManager.getInstance().isFilterIgnored(e.getProject());
+                    return filterIgnored;
+                case FILTER_RESOLVED:
+                    final boolean filterResolved = HAPreferenceManager.getInstance().isFilterResolved(e.getProject());
+                    return filterResolved;
+            }
+        }
+        return false;
     }
 
     @Override
     public void setSelected(AnActionEvent e, boolean state) {
+        switch (type) {
+            case FILTER_OPEN:
+                HAPreferenceManager.getInstance().setFilterOpen(e.getProject(), state);
+                break;
+            case FILTER_IGNORED:
+                HAPreferenceManager.getInstance().setFilterIgnored(e.getProject(), state);
+                break;
+            case FILTER_RESOLVED:
+                HAPreferenceManager.getInstance().setFilterResolved(e.getProject(), state);
+                break;
+        }
         final List<CrashReason> crashReasons = AutoSyncManager.getInstance().getCrashReasons();
         if (crashReasons != null) {
-            List<CrashReason> filteredList = AutoSyncManager.getInstance().getFilteredCrashReasons();
-            switch (type) {
-                case FILTER_OPEN:
-                    filter(crashReasons, 0, state);
-                    break;
-                case FILTER_IGNORED:
-                    filter(crashReasons, 2, state);
-                    break;
-                case FILTER_RESOLVED:
-                    filter(crashReasons, 1, state);
-                    break;
-            }
-            HockeyAppView.getInstance().intimate(filteredList);
+            AutoSyncManager.getInstance().filter();
+            HockeyAppView.getInstance().intimate();
         }
-        System.out.println("FilterCrashGroupsAction state = " + state);
-        isSelected = state;
-    }
 
-    private List<CrashReason> filter(List<CrashReason> crashReasons, int status, boolean isAdd) {
-        List<CrashReason> list = AutoSyncManager.getInstance().getFilteredCrashReasons();
-        for (CrashReason crashReason : crashReasons) {
-            if (crashReason.getStatus() == status) {
-                if (isAdd) {
-                    list.add(crashReason);
-                } else {
-                    list.remove(crashReason);
-                }
-            }
-        }
-        return list;
     }
 
     @Override
     public void update(AnActionEvent e) {
+        super.update(e);
         project = e.getProject();
         if (appId == null && project != null) {
             appId = HAPreferenceManager.getInstance().getAppId(project);

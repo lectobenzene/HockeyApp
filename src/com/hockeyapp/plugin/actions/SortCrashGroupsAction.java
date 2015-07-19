@@ -55,9 +55,9 @@ public class SortCrashGroupsAction extends AnAction {
                     Collections.sort(crashReasons, getLastCrashComparator(getOrder()));
                     break;
                 default:
-                    System.out.println("Something wrong here");
+                    //System.out.println("Something wrong here");
             }
-            HockeyAppView.getInstance().intimate(crashReasons);
+            HockeyAppView.getInstance().intimate();
         }
     }
 

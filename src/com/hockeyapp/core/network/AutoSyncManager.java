@@ -115,6 +115,26 @@ public class AutoSyncManager {
         return filteredCrashReasons;
     }
 
+    public void filter() {
+        final Project project = HockeyAppView.getInstance().getProject();
+        filteredCrashReasons.clear();
+        filter(0, HAPreferenceManager.getInstance().isFilterOpen(project));
+        filter(1, HAPreferenceManager.getInstance().isFilterResolved(project));
+        filter(2, HAPreferenceManager.getInstance().isFilterIgnored(project));
+    }
+
+    private void filter(int status, boolean isAdd) {
+        for (CrashReason crashReason : crashReasons) {
+            if (crashReason.getStatus() == status) {
+                if (isAdd) {
+                    filteredCrashReasons.add(crashReason);
+                } else {
+                    filteredCrashReasons.remove(crashReason);
+                }
+            }
+        }
+    }
+
     public interface AutoSyncListener {
         public void update(List<CrashReason> crashReasonsBunch);
     }
